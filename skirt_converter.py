@@ -1,9 +1,49 @@
+import json
+import argparse
 from PIL import Image
 from pathlib import Path
 
 skirtsFoldername = "input"
+shiftRight = True
+
+# Disgusting game code hacks
+featureYOffsetPerFrame = [1, 2, 2, 0, 5, 6, 1, 2, 2, 1,
+        0, 2, 0, 1, 1, 0, 2, 2, 3, 3,
+        2, 2, 1, 1, 0, 0, 2, 2, 4, 4,
+        0, 0, 1, 2, 1, 1, 1, 1, 0, 0,
+        1, 1, 1, 0, 0, -2, -1, 1, 1, 0,
+        -1, -2, -1, -1, 5, 4, 0, 0, 3, 2,
+        -1, 0, 4, 2, 0, 0, 2, 1, 0, -1,
+        1, -2, 0, 0, 1, 1, 1, 1, 1, 1,
+        0, 0, 0, 0, 1, -1, -1, -1, -1, 1,
+        1, 0, 0, 0, 0, 4, 1, 0, 1, 2,
+        1, 0, 1, 0, 1, 2, -3, -4, -1, 0,
+        0, 2, 1, -4, -1, 0, 0, -3, 0, 0,
+        -1, 0, 0, 2, 1, 1]
+
+featureXOffsetPerFrame = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, -1, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, -1,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, -1, -1, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 4, 0, 0, 0, 0, -1, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, -1, 0, 0,
+        0, 0, 0, 0, 0, 0]
 
 def main():
+	# Create the parser
+	parser = argparse.ArgumentParser()
+	# Add an argument
+	parser.add_argument('--rightHalf', type=bool, required=False, help="Whether to grab the right side sprites (female farmer base)",default=True)
+	# Parse the argument
+	args = parser.parse_args()
+	shiftRight = args.rightHalf
+
 	folderPath = Path(skirtsFoldername)
 
 	# Hardcoded static indices
@@ -72,101 +112,196 @@ def main():
 	outputFolder = Path("output")
 	outputFolder.mkdir(exist_ok=True)
 	for file in filelist:
-		print(file)
+		print("Processing " + str(file))
 		originalImage = Image.open(Path(file))
 
-		pantsAnimations = []
+		pantsAnimations = [[],[],[],[]]
+		pantsIdle = [[],[],[],[]]
 
-		finalImage = Image.new(mode="RGBA",size=(12*16,12000))
+		finalImage = Image.new(mode="RGBA",size=(4096, 96))
 
 		# Save all of the standing sprites row by row
-		nextRowNum = saveAllSpriteRows(0, standing, originalImage, finalImage, pantsAnimations, "")
+		nextColNum = saveAllSpriteRows(0, standing, originalImage, finalImage, pantsIdle, "default", [0, 0])
 
 		# Save all of the sitting sprites row by row
-		nextRowNum = saveAllSpriteRows(nextRowNum, sitting, originalImage, finalImage, pantsAnimations, "IsSitting")
+		nextColNum = saveAllSpriteRows(nextColNum, sitting, originalImage, finalImage, pantsIdle, "IsSitting", [-1, -4])
 
 		# Save all of the horseback riding sprites row by row
-		nextRowNum = saveAllSpriteRows(nextRowNum, horse, originalImage, finalImage, pantsAnimations, "RidingHorse")
+		nextColNum = saveAllSpriteRows(nextColNum, horse, originalImage, finalImage, pantsAnimations, "RidingHorse", [0, 0])
+
+		# Save all of the horseback riding sprites row by row
+		nextColNum = saveAllSpriteRows(nextColNum, horse, originalImage, finalImage, pantsIdle, "RidingHorse", [0, 0])
 
 		# Save all of the slingshot sprites row by row
-		nextRowNum = saveAllSpriteRows(nextRowNum, slingshot, originalImage, finalImage, pantsAnimations, "IsUsingSlingshot")
+		nextColNum = saveAllSpriteRows(nextColNum, slingshot, originalImage, finalImage, pantsIdle, "IsUsingSlingshot", [0, 0])
 
 		# Save all of the walking sprites row by row
-		nextRowNum = saveAllSpriteRows(nextRowNum, walking, originalImage, finalImage, pantsAnimations, "isWalking")
+		nextColNum = saveAllSpriteRows(nextColNum, walking, originalImage, finalImage, pantsAnimations, "isWalking", [0, 0])
 
 		# Save all of the running sprites row by row
-		nextRowNum = saveAllSpriteRows(nextRowNum, running, originalImage, finalImage, pantsAnimations, "isRunning")
+		nextColNum = saveAllSpriteRows(nextColNum, running, originalImage, finalImage, pantsAnimations, "isRunning", [0, 0])
 
 		# Save all of the heavy tool sprites row by row
-		nextRowNum = saveAllSpriteRows(nextRowNum, heavyTool, originalImage, finalImage, pantsAnimations, "IsUsingHeavyTool")
+		nextColNum = saveAllSpriteRows(nextColNum, heavyTool, originalImage, finalImage, pantsIdle, "IsUsingHeavyTool", [0, 0])
 
 		# Save all of the heavy tool pressed sprites row by row
-		nextRowNum = saveAllSpriteRows(nextRowNum, heavyToolPressed, originalImage, finalImage, pantsAnimations, "")
+		nextColNum = saveAllSpriteRows(nextColNum, heavyToolPressed, originalImage, finalImage, pantsIdle, "", [0, 0])
 
 		# Save all of the scythe sprites row by row
-		nextRowNum = saveAllSpriteRows(nextRowNum, meleeWeapon, originalImage, finalImage, pantsAnimations, "IsUsingScythe")
+		nextColNum = saveAllSpriteRows(nextColNum, meleeWeapon, originalImage, finalImage, pantsIdle, "IsUsingScythe", [0, 0])
 
 		# Save all of the melee weapon sprites row by row
-		nextRowNum = saveAllSpriteRows(nextRowNum, meleeWeapon, originalImage, finalImage, pantsAnimations, "IsUsingMeleeWeapon")
+		nextColNum = saveAllSpriteRows(nextColNum, meleeWeapon, originalImage, finalImage, pantsIdle, "IsUsingMeleeWeapon", [0, 0])
 
 		# Save all of the watering sprites row by row
-		nextRowNum = saveAllSpriteRows(nextRowNum, watering, originalImage, finalImage, pantsAnimations, "")
+		nextColNum = saveAllSpriteRows(nextColNum, watering, originalImage, finalImage, pantsIdle, "", [0, 0])
 
 		# Save all of the harvesting sprites row by row
-		nextRowNum = saveAllSpriteRows(nextRowNum, harvesting, originalImage, finalImage, pantsAnimations, "IsHarvesting")
+		nextColNum = saveAllSpriteRows(nextColNum, harvesting, originalImage, finalImage, pantsIdle, "IsHarvesting", [0, 0])
 
 		# Save all of the casting sprites row by row
-		nextRowNum = saveAllSpriteRows(nextRowNum, casting, originalImage, finalImage, pantsAnimations, "IsCasting")
+		nextColNum = saveAllSpriteRows(nextColNum, casting, originalImage, finalImage, pantsIdle, "IsCasting", [0, 0])
 
 		# Save all of the fishing sprites row by row
-		nextRowNum = saveAllSpriteRows(nextRowNum, fishing, originalImage, finalImage, pantsAnimations, "IsFishing")
+		nextColNum = saveAllSpriteRows(nextColNum, fishing, originalImage, finalImage, pantsIdle, "IsFishing", [0, 0])
 
 		# Save all of the reeling sprites row by row
-		nextRowNum = saveAllSpriteRows(nextRowNum, reeling, originalImage, finalImage, pantsAnimations, "IsReeling")
+		nextColNum = saveAllSpriteRows(nextColNum, reeling, originalImage, finalImage, pantsIdle, "IsReeling", [0, 0])
 
 		# Save all of the milking sprites row by row
-		nextRowNum = saveAllSpriteRows(nextRowNum, milking, originalImage, finalImage, pantsAnimations, "IsUsingMilkPail")
+		nextColNum = saveAllSpriteRows(nextColNum, milking, originalImage, finalImage, pantsIdle, "IsUsingMilkPail", [0, 0])
 
 		# Save all of the shearing sprites row by row
-		nextRowNum = saveAllSpriteRows(nextRowNum, shearing, originalImage, finalImage, pantsAnimations, "IsUsingShears")
+		nextColNum = saveAllSpriteRows(nextColNum, shearing, originalImage, finalImage, pantsIdle, "IsUsingShears", [0, 0])
 
 		# Save all of the bathing suit sprites row by row
-		nextRowNum = saveAllSpriteRows(nextRowNum, bathingSuit, originalImage, finalImage, pantsAnimations, "IsInBathingSuit")
+		nextColNum = saveAllSpriteRows(nextColNum, bathingSuit, originalImage, finalImage, pantsAnimations, "IsInBathingSuit", [0, 0])
 
 		# Save all of the eating sprites
-		nextRowNum = saveAllSpriteRows(nextRowNum, eating, originalImage, finalImage, pantsAnimations, "IsEating")
+		nextColNum = saveAllSpriteRows(nextColNum, eating, originalImage, finalImage, pantsIdle, "IsEating", [0, 0])
 
 		# Save all of the drinking sprites
-		nextRowNum = saveAllSpriteRows(nextRowNum, drinking, originalImage, finalImage, pantsAnimations, "IsDrinking")
+		nextColNum = saveAllSpriteRows(nextColNum, drinking, originalImage, finalImage, pantsIdle, "IsDrinking", [0, 0])
 
 		# Save all of the panning sprites
-		nextRowNum = saveAllSpriteRows(nextRowNum, panning, originalImage, finalImage, pantsAnimations, "IsUsingPan")
+		nextColNum = saveAllSpriteRows(nextColNum, panning, originalImage, finalImage, pantsIdle, "IsUsingPan", [0, 0])
 
 		# Save all of the passing out sprites
-		nextRowNum = saveAllSpriteRows(nextRowNum, passOut, originalImage, finalImage, pantsAnimations, "")
+		nextColNum = saveAllSpriteRows(nextColNum, passOut, originalImage, finalImage, pantsIdle, "", [0, 0])
 
 		# Save all of the nausea sprites
-		nextRowNum = saveAllSpriteRows(nextRowNum, nausea, originalImage, finalImage, pantsAnimations, "")
+		nextColNum = saveAllSpriteRows(nextColNum, nausea, originalImage, finalImage, pantsIdle, "", [0, 0])
 
-		finalImage = finalImage.crop((0,0,12*16,nextRowNum*32))
+		# Crop final image to the used portion
+		finalImage = finalImage.crop((0,0,nextColNum*16,3*32))
 
-		finalImage.save(outputFolder.joinpath(file.name))
+		# Make folder for this pants
+		thisPantsFolder = outputFolder.joinpath(file.stem)
+		thisPantsFolder.mkdir(exist_ok=True)
 
-def saveAllSpriteRows(initialRowNum, listName, originalImage, finalImage, pantsAnimations, condition):
-	rowNum = initialRowNum
+		# Save final image to output folder
+		finalImage.save(thisPantsFolder.joinpath("pants.png"))
+		pantsData = makePantsModels(pantsIdle, pantsAnimations, file.stem)
 
+		# Save pants json to output folder
+		
+		with thisPantsFolder.joinpath("pants.json").open("w") as write_file:
+			json.dump(pantsData, write_file, indent=4)
+
+def addFrameInfo(pantsAnimations, direction, frameNum, condition):
+	if condition == "default":
+		pantsAnimations[direction].append({
+			"Frame": frameNum,
+			"EndWhenFarmerFrameUpdates": True,
+		},)
+	elif condition != "":
+		pantsAnimations[direction].append({
+			"Frame": frameNum,
+			"EndWhenFarmerFrameUpdates": True,
+			"Conditions": [
+				{
+				"Name": condition,
+				"Value": True
+				}
+			]
+		},)
+
+def saveAllSpriteRows(initialColNum, listName, originalImage, finalImage, pantsAnimations, condition, offset):
+	rowNum = 0
 	for direction in listName:
-		colNum = 0
+		colNum = initialColNum
 		for frame in direction:
+			# Add the frames in this direction to the spritesheet
 			frameNum = int(frame.split("@")[0])
 			xLoc = frameNum % 6
 			yLoc = frameNum // 6
-			# print("x = " + str(xLoc) + " y = " + str(yLoc))
-			frameImage = originalImage.crop((xLoc*16, yLoc*32, (xLoc+1)*16, (yLoc+1)*32))
+			# Swap to right half if needed
+			if shiftRight:
+				xLoc = xLoc + 6
+			frameImage = originalImage.crop((xLoc*16+offset[0], yLoc*32+offset[1], (xLoc+1)*16+offset[0], (yLoc+1)*32+offset[1]))
 			finalImage.paste(frameImage,(colNum*16,rowNum*32))
+
+			# Add the frames in this direction to the animations list
+			addFrameInfo(pantsAnimations, rowNum, colNum, condition)
+			# Add left pants as well if we're adding right pants
+			if rowNum == 1:
+				addFrameInfo(pantsAnimations, 3, colNum, condition)
+
+			# Increment the column number
 			colNum = colNum + 1
 		rowNum = rowNum + 1
-	return rowNum
+	return colNum
+
+def makePantsModels(pantsIdle, pantsAnimations, pantsName):
+	pantsData = {}
+	pantsData["Name"] = pantsName
+
+	frontPants = {}
+	frontPants["StartingPosition"] = {"X": 0, "Y": 0}
+	frontPants["BodyPosition"] = {"X": 0, "Y": 1}
+	frontPants["PantsSize"] = {"Width": 16, "Length": 32}
+	frontPants["HideWhileSwimming"] = True
+	frontPants["HideWhileWearingBathingSuit"] = True
+	frontPants["DisableGrayscale"] = True
+	frontPants["IdleAnimation"] = pantsIdle[0]
+	frontPants["MovementAnimation"] = pantsAnimations[0]
+	pantsData["FrontPants"] = frontPants
+
+	rightPants = {}
+	rightPants["StartingPosition"] = {"X": 0, "Y": 32}
+	rightPants["BodyPosition"] = {"X": 0, "Y": 3}
+	rightPants["PantsSize"] = {"Width": 16, "Length": 32}
+	rightPants["HideWhileSwimming"] = True
+	rightPants["HideWhileWearingBathingSuit"] = True
+	rightPants["DisableGrayscale"] = True
+	rightPants["IdleAnimation"] = pantsIdle[1]
+	rightPants["MovementAnimation"] = pantsAnimations[1]
+	pantsData["RightPants"] = rightPants
+
+	backPants = {}
+	backPants["StartingPosition"] = {"X": 0, "Y": 64}
+	backPants["BodyPosition"] = {"X": 0, "Y": 1}
+	backPants["PantsSize"] = {"Width": 16, "Length": 32}
+	backPants["HideWhileSwimming"] = True
+	backPants["HideWhileWearingBathingSuit"] = True
+	backPants["DisableGrayscale"] = True
+	backPants["IdleAnimation"] = pantsIdle[2]
+	backPants["MovementAnimation"] = pantsAnimations[2]
+	pantsData["BackPants"] = backPants
+
+	leftPants = {}
+	leftPants["StartingPosition"] = {"X": 0, "Y": 32}
+	leftPants["BodyPosition"] = {"X": 0, "Y": 1}
+	leftPants["PantsSize"] = {"Width": 16, "Length": 32}
+	leftPants["Flipped"] = True
+	leftPants["HideWhileSwimming"] = True
+	leftPants["HideWhileWearingBathingSuit"] = True
+	leftPants["DisableGrayscale"] = True
+	leftPants["IdleAnimation"] = pantsIdle[3]
+	leftPants["MovementAnimation"] = pantsAnimations[3]
+	pantsData["LeftPants"] = leftPants
+
+	return pantsData
 
 # Call the main function
 main()
