@@ -269,7 +269,7 @@ def makePantsModels(pantsIdle, pantsAnimations, pantsName):
 
 	rightPants = {}
 	rightPants["StartingPosition"] = {"X": 0, "Y": 32}
-	rightPants["BodyPosition"] = {"X": 0, "Y": 3}
+	rightPants["BodyPosition"] = {"X": 0, "Y": 1}
 	rightPants["PantsSize"] = {"Width": 16, "Length": 32}
 	rightPants["HideWhileSwimming"] = True
 	rightPants["HideWhileWearingBathingSuit"] = True
