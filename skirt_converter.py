@@ -121,76 +121,76 @@ def main():
 		finalImage = Image.new(mode="RGBA",size=(4096, 96))
 
 		# Save all of the standing sprites row by row
-		nextColNum = saveAllSpriteRows(0, standing, originalImage, finalImage, pantsIdle, "default", [0, 0])
+		nextColNum = saveAllSpriteRows(0, standing, originalImage, finalImage, pantsIdle, "default")
 
 		# Save all of the sitting sprites row by row
-		nextColNum = saveAllSpriteRows(nextColNum, sitting, originalImage, finalImage, pantsIdle, "IsSitting", [-1, -4])
+		nextColNum = saveAllSpriteRows(nextColNum, sitting, originalImage, finalImage, pantsIdle, "IsSitting")
 
 		# Save all of the horseback riding sprites row by row
-		nextColNum = saveAllSpriteRows(nextColNum, horse, originalImage, finalImage, pantsAnimations, "RidingHorse", [0, 0])
+		nextColNum = saveAllSpriteRows(nextColNum, horse, originalImage, finalImage, pantsAnimations, "RidingHorse")
 
 		# Save all of the horseback riding sprites row by row
-		nextColNum = saveAllSpriteRows(nextColNum, horse, originalImage, finalImage, pantsIdle, "RidingHorse", [0, 0])
+		nextColNum = saveAllSpriteRows(nextColNum, horse, originalImage, finalImage, pantsIdle, "RidingHorse")
 
 		# Save all of the slingshot sprites row by row
-		nextColNum = saveAllSpriteRows(nextColNum, slingshot, originalImage, finalImage, pantsIdle, "IsUsingSlingshot", [0, 0])
+		nextColNum = saveAllSpriteRows(nextColNum, slingshot, originalImage, finalImage, pantsIdle, "IsUsingSlingshot")
 
 		# Save all of the walking sprites row by row
-		nextColNum = saveAllSpriteRows(nextColNum, walking, originalImage, finalImage, pantsAnimations, "isWalking", [0, 0])
+		nextColNum = saveAllSpriteRows(nextColNum, walking, originalImage, finalImage, pantsAnimations, "isWalking")
 
 		# Save all of the running sprites row by row
-		nextColNum = saveAllSpriteRows(nextColNum, running, originalImage, finalImage, pantsAnimations, "isRunning", [0, 0])
+		nextColNum = saveAllSpriteRows(nextColNum, running, originalImage, finalImage, pantsAnimations, "isRunning")
 
 		# Save all of the heavy tool sprites row by row
-		nextColNum = saveAllSpriteRows(nextColNum, heavyTool, originalImage, finalImage, pantsIdle, "IsUsingHeavyTool", [0, 0])
+		nextColNum = saveAllSpriteRows(nextColNum, heavyTool, originalImage, finalImage, pantsIdle, "IsUsingHeavyTool")
 
 		# Save all of the heavy tool pressed sprites row by row
-		nextColNum = saveAllSpriteRows(nextColNum, heavyToolPressed, originalImage, finalImage, pantsIdle, "", [0, 0])
+		nextColNum = saveAllSpriteRows(nextColNum, heavyToolPressed, originalImage, finalImage, pantsIdle, "")
 
 		# Save all of the scythe sprites row by row
-		nextColNum = saveAllSpriteRows(nextColNum, meleeWeapon, originalImage, finalImage, pantsIdle, "IsUsingScythe", [0, 0])
+		nextColNum = saveAllSpriteRows(nextColNum, meleeWeapon, originalImage, finalImage, pantsIdle, "IsUsingScythe")
 
 		# Save all of the melee weapon sprites row by row
-		nextColNum = saveAllSpriteRows(nextColNum, meleeWeapon, originalImage, finalImage, pantsIdle, "IsUsingMeleeWeapon", [0, 0])
+		nextColNum = saveAllSpriteRows(nextColNum, meleeWeapon, originalImage, finalImage, pantsIdle, "IsUsingMeleeWeapon")
 
 		# Save all of the watering sprites row by row
-		nextColNum = saveAllSpriteRows(nextColNum, watering, originalImage, finalImage, pantsIdle, "", [0, 0])
+		nextColNum = saveAllSpriteRows(nextColNum, watering, originalImage, finalImage, pantsIdle, "")
 
 		# Save all of the harvesting sprites row by row
-		nextColNum = saveAllSpriteRows(nextColNum, harvesting, originalImage, finalImage, pantsIdle, "IsHarvesting", [0, 0])
+		nextColNum = saveAllSpriteRows(nextColNum, harvesting, originalImage, finalImage, pantsIdle, "IsHarvesting")
 
 		# Save all of the casting sprites row by row
-		nextColNum = saveAllSpriteRows(nextColNum, casting, originalImage, finalImage, pantsIdle, "IsCasting", [0, 0])
+		nextColNum = saveAllSpriteRows(nextColNum, casting, originalImage, finalImage, pantsIdle, "IsCasting")
 
 		# Save all of the fishing sprites row by row
-		nextColNum = saveAllSpriteRows(nextColNum, fishing, originalImage, finalImage, pantsIdle, "IsFishing", [0, 0])
+		nextColNum = saveAllSpriteRows(nextColNum, fishing, originalImage, finalImage, pantsIdle, "IsFishing")
 
 		# Save all of the reeling sprites row by row
-		nextColNum = saveAllSpriteRows(nextColNum, reeling, originalImage, finalImage, pantsIdle, "IsReeling", [0, 0])
+		nextColNum = saveAllSpriteRows(nextColNum, reeling, originalImage, finalImage, pantsIdle, "IsReeling")
 
 		# Save all of the milking sprites row by row
-		nextColNum = saveAllSpriteRows(nextColNum, milking, originalImage, finalImage, pantsIdle, "IsUsingMilkPail", [0, 0])
+		nextColNum = saveAllSpriteRows(nextColNum, milking, originalImage, finalImage, pantsIdle, "IsUsingMilkPail")
 
 		# Save all of the shearing sprites row by row
-		nextColNum = saveAllSpriteRows(nextColNum, shearing, originalImage, finalImage, pantsIdle, "IsUsingShears", [0, 0])
+		nextColNum = saveAllSpriteRows(nextColNum, shearing, originalImage, finalImage, pantsIdle, "IsUsingShears")
 
 		# Save all of the bathing suit sprites row by row
-		nextColNum = saveAllSpriteRows(nextColNum, bathingSuit, originalImage, finalImage, pantsAnimations, "IsInBathingSuit", [0, 0])
+		nextColNum = saveAllSpriteRows(nextColNum, bathingSuit, originalImage, finalImage, pantsAnimations, "IsInBathingSuit")
 
 		# Save all of the eating sprites
-		nextColNum = saveAllSpriteRows(nextColNum, eating, originalImage, finalImage, pantsIdle, "IsEating", [0, 0])
+		nextColNum = saveAllSpriteRows(nextColNum, eating, originalImage, finalImage, pantsIdle, "IsEating")
 
 		# Save all of the drinking sprites
-		nextColNum = saveAllSpriteRows(nextColNum, drinking, originalImage, finalImage, pantsIdle, "IsDrinking", [0, 0])
+		nextColNum = saveAllSpriteRows(nextColNum, drinking, originalImage, finalImage, pantsIdle, "IsDrinking")
 
 		# Save all of the panning sprites
-		nextColNum = saveAllSpriteRows(nextColNum, panning, originalImage, finalImage, pantsIdle, "IsUsingPan", [0, 0])
+		nextColNum = saveAllSpriteRows(nextColNum, panning, originalImage, finalImage, pantsIdle, "IsUsingPan")
 
 		# Save all of the passing out sprites
-		nextColNum = saveAllSpriteRows(nextColNum, passOut, originalImage, finalImage, pantsIdle, "", [0, 0])
+		nextColNum = saveAllSpriteRows(nextColNum, passOut, originalImage, finalImage, pantsIdle, "")
 
 		# Save all of the nausea sprites
-		nextColNum = saveAllSpriteRows(nextColNum, nausea, originalImage, finalImage, pantsIdle, "", [0, 0])
+		nextColNum = saveAllSpriteRows(nextColNum, nausea, originalImage, finalImage, pantsIdle, "")
 
 		# Crop final image to the used portion
 		finalImage = finalImage.crop((0,0,nextColNum*16,3*32))
@@ -226,7 +226,7 @@ def addFrameInfo(pantsAnimations, direction, frameNum, condition):
 			]
 		},)
 
-def saveAllSpriteRows(initialColNum, listName, originalImage, finalImage, pantsAnimations, condition, offset):
+def saveAllSpriteRows(initialColNum, listName, originalImage, finalImage, pantsAnimations, condition):
 	rowNum = 0
 	for direction in listName:
 		colNum = initialColNum
@@ -238,8 +238,8 @@ def saveAllSpriteRows(initialColNum, listName, originalImage, finalImage, pantsA
 			# Swap to right half if needed
 			if shiftRight:
 				xLoc = xLoc + 6
-			frameImage = originalImage.crop((xLoc*16+offset[0], yLoc*32+offset[1], (xLoc+1)*16+offset[0], (yLoc+1)*32+offset[1]))
-			finalImage.paste(frameImage,(colNum*16,rowNum*32))
+			frameImage = originalImage.crop((xLoc*16, yLoc*32, (xLoc+1)*16, (yLoc+1)*32))
+			finalImage.paste(frameImage,(colNum*16+featureXOffsetPerFrame[frameNum],rowNum*32+featureYOffsetPerFrame[frameNum]))
 
 			# Add the frames in this direction to the animations list
 			addFrameInfo(pantsAnimations, rowNum, colNum, condition)
