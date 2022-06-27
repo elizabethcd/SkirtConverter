@@ -87,9 +87,13 @@ def main():
 			   ["48@100", "49@40", "50@40", "51@80", "52@200"],
 			   ["76@100", "38@40", "63@40", "62@80", "63@200"]]
 
+	fishCatching = [["74", "57", "84"],
+					["72", "57", "84"],
+					["76", "57", "84"]]
+
 	milking = [["54@400", "55@400", "54@400", "55@400"],
 			   ["58@400", "59@400", "58@400", "59@400"],
-			   ["56@400", "57@400", "56@400", "57@400"]]
+			   ["62@400", "63@400", "62@400", "63@400"]]
 
 	shearing = [["78@400", "79@400", "78@400", "79@400"],
 			    ["80@400", "81@400", "80@400", "81@400"],
@@ -145,7 +149,8 @@ def main():
 		nextColNum = saveAllSpriteRows(nextColNum, heavyTool, originalImage, finalImage, pantsIdle, "IsUsingHeavyTool")
 
 		# Save all of the heavy tool pressed sprites row by row
-		nextColNum = saveAllSpriteRows(nextColNum, heavyToolPressed, originalImage, finalImage, pantsIdle, "")
+		nextColNum = saveAllSpriteRows(nextColNum, heavyToolPressed, originalImage, finalImage, pantsIdle, "toolCharge")
+		# TODO: Deal with this!!!
 
 		# Save all of the scythe sprites row by row
 		nextColNum = saveAllSpriteRows(nextColNum, meleeWeapon, originalImage, finalImage, pantsIdle, "IsUsingScythe")
@@ -154,7 +159,7 @@ def main():
 		nextColNum = saveAllSpriteRows(nextColNum, meleeWeapon, originalImage, finalImage, pantsIdle, "IsUsingMeleeWeapon")
 
 		# Save all of the watering sprites row by row
-		nextColNum = saveAllSpriteRows(nextColNum, watering, originalImage, finalImage, pantsIdle, "")
+		nextColNum = saveAllSpriteRows(nextColNum, watering, originalImage, finalImage, pantsIdle, "IsWatering")
 
 		# Save all of the harvesting sprites row by row
 		nextColNum = saveAllSpriteRows(nextColNum, harvesting, originalImage, finalImage, pantsIdle, "IsHarvesting")
@@ -167,6 +172,9 @@ def main():
 
 		# Save all of the reeling sprites row by row
 		nextColNum = saveAllSpriteRows(nextColNum, reeling, originalImage, finalImage, pantsIdle, "IsReeling")
+
+		# Save all of the fish catching sprites row by row
+		nextColNum = saveAllSpriteRows(nextColNum, fishCatching, originalImage, finalImage, pantsIdle, "IsPullingFishOutOfWater")
 
 		# Save all of the milking sprites row by row
 		nextColNum = saveAllSpriteRows(nextColNum, milking, originalImage, finalImage, pantsIdle, "IsUsingMilkPail")
@@ -187,10 +195,10 @@ def main():
 		nextColNum = saveAllSpriteRows(nextColNum, panning, originalImage, finalImage, pantsIdle, "IsUsingPan")
 
 		# Save all of the passing out sprites
-		nextColNum = saveAllSpriteRows(nextColNum, passOut, originalImage, finalImage, pantsIdle, "")
+		nextColNum = saveAllSpriteRows(nextColNum, passOut, originalImage, finalImage, pantsIdle, "IsPassingOut")
 
 		# Save all of the nausea sprites
-		nextColNum = saveAllSpriteRows(nextColNum, nausea, originalImage, finalImage, pantsIdle, "")
+		nextColNum = saveAllSpriteRows(nextColNum, nausea, originalImage, finalImage, pantsIdle, "IsSick")
 
 		# Crop final image to the used portion
 		finalImage = finalImage.crop((0,0,nextColNum*16,3*32))
@@ -208,12 +216,15 @@ def main():
 		with thisPantsFolder.joinpath("pants.json").open("w") as write_file:
 			json.dump(pantsData, write_file, indent=4)
 
-def addFrameInfo(pantsAnimations, direction, frameNum, condition):
+def addFrameInfo(pantsAnimations, direction, frameNum, condition, initialColNum):
 	if condition == "default":
 		pantsAnimations[direction].append({
 			"Frame": frameNum,
 			"EndWhenFarmerFrameUpdates": True,
 		},)
+	elif condition == "toolCharge":
+		chargeNum = frameNum - initialColNum
+		addFrameInfoToolCharging(pantsAnimations, direction, frameNum, chargeNum)
 	elif condition != "":
 		pantsAnimations[direction].append({
 			"Frame": frameNum,
@@ -225,6 +236,32 @@ def addFrameInfo(pantsAnimations, direction, frameNum, condition):
 				}
 			]
 		},)
+
+def addFrameInfoToolCharging(pantsAnimations, direction, frameNum, chargeNum):
+	if chargeNum == 1:
+		pantsAnimations[direction].append({
+				"Frame": frameNum,
+				"EndWhenFarmerFrameUpdates": True,
+				"Conditions": [
+					{
+					"Name": "ToolChargeLevel",
+					"Operator": "EqualTo",
+					"Value": 1
+					}
+				]
+			},)
+	elif chargeNum == 2:
+		pantsAnimations[direction].append({
+				"Frame": frameNum,
+				"EndWhenFarmerFrameUpdates": True,
+				"Conditions": [
+					{
+					"Name": "ToolChargeLevel",
+					"Operator": "GreaterThan",
+					"Value": 1
+					}
+				]
+			},)
 
 def saveAllSpriteRows(initialColNum, listName, originalImage, finalImage, pantsAnimations, condition):
 	rowNum = 0
@@ -239,13 +276,13 @@ def saveAllSpriteRows(initialColNum, listName, originalImage, finalImage, pantsA
 			if shiftRight:
 				xLoc = xLoc + 6
 			frameImage = originalImage.crop((xLoc*16, yLoc*32, (xLoc+1)*16, (yLoc+1)*32))
-			finalImage.paste(frameImage,(colNum*16+featureXOffsetPerFrame[frameNum],rowNum*32+featureYOffsetPerFrame[frameNum]))
+			finalImage.paste(frameImage,(colNum*16-featureXOffsetPerFrame[frameNum],rowNum*32-featureYOffsetPerFrame[frameNum]))
 
 			# Add the frames in this direction to the animations list
-			addFrameInfo(pantsAnimations, rowNum, colNum, condition)
+			addFrameInfo(pantsAnimations, rowNum, colNum, condition, initialColNum)
 			# Add left pants as well if we're adding right pants
 			if rowNum == 1:
-				addFrameInfo(pantsAnimations, 3, colNum, condition)
+				addFrameInfo(pantsAnimations, 3, colNum, condition, initialColNum)
 
 			# Increment the column number
 			colNum = colNum + 1
@@ -258,7 +295,7 @@ def makePantsModels(pantsIdle, pantsAnimations, pantsName):
 
 	frontPants = {}
 	frontPants["StartingPosition"] = {"X": 0, "Y": 0}
-	frontPants["BodyPosition"] = {"X": 0, "Y": 1}
+	frontPants["BodyPosition"] = {"X": 0, "Y": 0}
 	frontPants["PantsSize"] = {"Width": 16, "Length": 32}
 	frontPants["HideWhileSwimming"] = True
 	frontPants["HideWhileWearingBathingSuit"] = True
@@ -280,7 +317,7 @@ def makePantsModels(pantsIdle, pantsAnimations, pantsName):
 
 	backPants = {}
 	backPants["StartingPosition"] = {"X": 0, "Y": 64}
-	backPants["BodyPosition"] = {"X": 0, "Y": 1}
+	backPants["BodyPosition"] = {"X": 0, "Y": 0}
 	backPants["PantsSize"] = {"Width": 16, "Length": 32}
 	backPants["HideWhileSwimming"] = True
 	backPants["HideWhileWearingBathingSuit"] = True
@@ -291,7 +328,7 @@ def makePantsModels(pantsIdle, pantsAnimations, pantsName):
 
 	leftPants = {}
 	leftPants["StartingPosition"] = {"X": 0, "Y": 32}
-	leftPants["BodyPosition"] = {"X": 0, "Y": 1}
+	leftPants["BodyPosition"] = {"X": 0, "Y": 0}
 	leftPants["PantsSize"] = {"Width": 16, "Length": 32}
 	leftPants["Flipped"] = True
 	leftPants["HideWhileSwimming"] = True
