@@ -67,6 +67,8 @@ def main():
 	fishing = [["70"],["91"],["44"]]
 	reeling = [["66"],["48"],["36"]]
 	slingshot = [["42"],["43"],["44"]]
+	swordSpecial = [["28"],["34"],["40"]]
+	bathingSuitStanding = [["108"],["114"],["120"]]
 
 	# Hardcoded animation indices
 	walking = [["0@200", "1@200", "0@200", "2@200"],
@@ -76,10 +78,6 @@ def main():
 	running = [["0@90", "1@60", "18@120", "1@60", "0@90", "2@60", "19@120", "2@60"],
 			   ["6@90", "21@140", "17@100", "6@90", "20@140", "11@100"],
 			   ["12@90", "13@60", "22@120", "13@60", "12@90", "14@60", "23@120", "14@60"]]
-
-	swordSpecial = [["28"],
-					["34"],
-					["40"]]
 
 	heavyTool = [["66@150", "67@40", "68@40", "69@170", "70@75"],
 				 ["48@100", "49@40", "50@40", "51@220", "52@75"],
@@ -159,6 +157,9 @@ def main():
 		# Save all of the horseback riding sprites row by row
 		nextColNum = saveAllSpriteRows(nextColNum, horse, originalImage, finalImage, pantsIdle, "RidingHorse", shiftRight)
 
+		# Save all of the bathing suit standing sprites row by row
+		nextColNum = saveAllSpriteRows(nextColNum, bathingSuitStanding, originalImage, finalImage, pantsIdle, "byFrameNum", shiftRight)
+
 		# Save all of the standing sprites row by row
 		nextColNum = saveAllSpriteRows(nextColNum, standing, originalImage, finalImage, pantsIdle, "default", shiftRight)
 
@@ -166,10 +167,10 @@ def main():
 		nextColNum = saveAllSpriteRows(nextColNum, slingshot, originalImage, finalImage, pantsIdle, "IsUsingSlingshot", shiftRight)
 
 		# Save all of the walking sprites row by row
-		nextColNum = saveAllSpriteRows(nextColNum, walking, originalImage, finalImage, pantsAnimations, "isWalking", shiftRight)
+		nextColNum = saveAllSpriteRows(nextColNum, walking, originalImage, finalImage, pantsAnimations, "byFrameNum", shiftRight)
 
 		# Save all of the running sprites row by row
-		nextColNum = saveAllSpriteRows(nextColNum, running, originalImage, finalImage, pantsAnimations, "isRunning", shiftRight)
+		nextColNum = saveAllSpriteRows(nextColNum, running, originalImage, finalImage, pantsAnimations, "IsRunning", shiftRight)
 
 		# Save all of the heavy tool pressed sprites row by row
 		nextColNum = saveAllSpriteRows(nextColNum, heavyToolPressed, originalImage, finalImage, pantsIdle, "toolCharge", shiftRight)
@@ -214,7 +215,7 @@ def main():
 		nextColNum = saveAllSpriteRows(nextColNum, shearing, originalImage, finalImage, pantsIdle, "IsUsingShears", shiftRight)
 
 		# Save all of the bathing suit sprites row by row
-		nextColNum = saveAllSpriteRows(nextColNum, bathingSuit, originalImage, finalImage, pantsAnimations, "IsInBathingSuit", shiftRight)
+		nextColNum = saveAllSpriteRows(nextColNum, bathingSuit, originalImage, finalImage, pantsAnimations, "byFrameNum", shiftRight)
 
 		# Save all of the eating sprites
 		nextColNum = saveAllSpriteRows(nextColNum, eating, originalImage, finalImage, pantsIdle, "IsEating", shiftRight)
@@ -375,7 +376,7 @@ def makePantsModels(pantsIdle, pantsAnimations, pantsName, shiftRight):
 		frontPants["BodyPosition"] = {"X": 0, "Y": -1}
 	frontPants["PantsSize"] = {"Width": 16, "Length": 32}
 	frontPants["HideWhileSwimming"] = True
-	frontPants["HideWhileWearingBathingSuit"] = True
+	frontPants["HideWhileWearingBathingSuit"] = False
 	frontPants["DisableGrayscale"] = True
 	frontPants["IdleAnimation"] = pantsIdle[0]
 	frontPants["MovementAnimation"] = pantsAnimations[0]
@@ -389,7 +390,7 @@ def makePantsModels(pantsIdle, pantsAnimations, pantsName, shiftRight):
 		rightPants["BodyPosition"] = {"X": 0, "Y": 0}
 	rightPants["PantsSize"] = {"Width": 16, "Length": 32}
 	rightPants["HideWhileSwimming"] = True
-	rightPants["HideWhileWearingBathingSuit"] = True
+	rightPants["HideWhileWearingBathingSuit"] = False
 	rightPants["DisableGrayscale"] = True
 	rightPants["IdleAnimation"] = pantsIdle[1]
 	rightPants["MovementAnimation"] = pantsAnimations[1]
@@ -403,7 +404,7 @@ def makePantsModels(pantsIdle, pantsAnimations, pantsName, shiftRight):
 		backPants["BodyPosition"] = {"X": 0, "Y": -1}
 	backPants["PantsSize"] = {"Width": 16, "Length": 32}
 	backPants["HideWhileSwimming"] = True
-	backPants["HideWhileWearingBathingSuit"] = True
+	backPants["HideWhileWearingBathingSuit"] = False
 	backPants["DisableGrayscale"] = True
 	backPants["IdleAnimation"] = pantsIdle[2]
 	backPants["MovementAnimation"] = pantsAnimations[2]
@@ -418,7 +419,7 @@ def makePantsModels(pantsIdle, pantsAnimations, pantsName, shiftRight):
 	leftPants["PantsSize"] = {"Width": 16, "Length": 32}
 	leftPants["Flipped"] = True
 	leftPants["HideWhileSwimming"] = True
-	leftPants["HideWhileWearingBathingSuit"] = True
+	leftPants["HideWhileWearingBathingSuit"] = False
 	leftPants["DisableGrayscale"] = True
 	leftPants["IdleAnimation"] = pantsIdle[3]
 	leftPants["MovementAnimation"] = pantsAnimations[3]
