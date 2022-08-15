@@ -81,13 +81,17 @@ def main():
 				 ["48@100", "49@40", "50@40", "51@220", "52@75"],
 				 ["36@100", "37@40", "38@40", "63@220", "62@75"]]
 
-	heavyToolPressed =[["66@600", "74@600", "75"],
-					   ["48@600", "72@600", "73"],
-					   ["36@600", "76@600", "77"]]
+	heavyToolPressed =[["66@600", "74@600", "75", "75", "66@150", "67@40", "68@40", "69@170", "70@75"],
+					   ["48@600", "72@600", "73", "73", "48@100", "49@40", "50@40", "51@220", "52@75"],
+					   ["36@600", "76@600", "77", "77", "36@100", "37@40", "38@40", "63@220", "62@75"]]
 
 	meleeWeapon = [["24@55", "25@45", "26@25", "27@25", "28@25", "29"],
 				   ["30@55", "31@45", "32@25", "33@25", "34@25", "35"],
 				   ["36@55", "37@45", "38@25", "39@25", "40@25", "41"]]
+
+	dagger = [["25", "27"],
+			  ["34", "33"],
+			  ["40", "38"]]
 
 	watering = [["54@75", "55@100", "25@500"],
 				["58@75", "59@100", "45@500"],
@@ -122,6 +126,10 @@ def main():
 	panning = [["123@150", "124@150", "123@150", "125@150", "123@150", "124@150", "123@150", "125@150", "123@150", "124@150", "123@150", "125@150", "123@150", "124@150", "123@500"]]
 	passOut = [["16@1000", "0@500", "16@1000", "4@200", "5@6000"]]
 	nausea = [["104@350", "105@350", "104@350", "105@350", "104@350", "105@350", "104@350", "105@350"]]
+
+	events = [["15", "95", "96", "97", "98", "99", "100", "111", "112"],
+				   ["15", "95", "96", "97", "98", "99", "100", "111", "112"],
+				   ["15", "95", "96", "97", "98", "99", "100", "111", "112"]]
 
 	# Get all images in skirts folder
 	filelist = folderPath.glob("*.png")
@@ -159,18 +167,20 @@ def main():
 		# Save all of the running sprites row by row
 		nextColNum = saveAllSpriteRows(nextColNum, running, originalImage, finalImage, pantsAnimations, "isRunning", shiftRight)
 
-		# Save all of the heavy tool sprites row by row
-		nextColNum = saveAllSpriteRows(nextColNum, heavyTool, originalImage, finalImage, pantsIdle, "IsUsingHeavyTool", shiftRight)
-
 		# Save all of the heavy tool pressed sprites row by row
 		nextColNum = saveAllSpriteRows(nextColNum, heavyToolPressed, originalImage, finalImage, pantsIdle, "toolCharge", shiftRight)
-		# TODO: Deal with this!!!
+
+		# Save all of the heavy tool sprites row by row
+		nextColNum = saveAllSpriteRows(nextColNum, heavyTool, originalImage, finalImage, pantsIdle, "IsUsingHeavyTool", shiftRight)
 
 		# Save all of the scythe sprites row by row
 		nextColNum = saveAllSpriteRows(nextColNum, meleeWeapon, originalImage, finalImage, pantsIdle, "IsUsingScythe", shiftRight)
 
 		# Save all of the melee weapon sprites row by row
 		nextColNum = saveAllSpriteRows(nextColNum, meleeWeapon, originalImage, finalImage, pantsIdle, "IsUsingMeleeWeapon", shiftRight)
+
+		# Save all of the dagger sprites row by row
+		nextColNum = saveAllSpriteRows(nextColNum, meleeWeapon, originalImage, finalImage, pantsIdle, "IsUsingDagger", shiftRight)
 
 		# Save all of the watering sprites row by row
 		nextColNum = saveAllSpriteRows(nextColNum, watering, originalImage, finalImage, pantsIdle, "IsWatering", shiftRight)
@@ -214,6 +224,9 @@ def main():
 		# Save all of the nausea sprites
 		nextColNum = saveAllSpriteRows(nextColNum, nausea, originalImage, finalImage, pantsIdle, "IsSick", shiftRight)
 
+		# Save all of the event sprites
+		nextColNum = saveAllSpriteRows(nextColNum, events, originalImage, finalImage, pantsIdle, "events", shiftRight)
+
 		# Crop final image to the used portion
 		finalImage = finalImage.crop((0,0,nextColNum*16,3*32))
 
@@ -230,52 +243,92 @@ def main():
 		with thisPantsFolder.joinpath("pants.json").open("w") as write_file:
 			json.dump(pantsData, write_file, indent=4)
 
-def addFrameInfo(pantsAnimations, direction, frameNum, condition, initialColNum):
+def addFrameInfo(pantsAnimations, direction, colNum, condition, initialColNum, frameNum):
 	if condition == "default":
 		pantsAnimations[direction].append({
-			"Frame": frameNum,
+			"Frame": colNum,
 			"EndWhenFarmerFrameUpdates": True,
 		},)
 	elif condition == "toolCharge":
-		chargeNum = frameNum - initialColNum
-		addFrameInfoToolCharging(pantsAnimations, direction, frameNum, chargeNum)
-	elif condition != "":
+		chargeNum = colNum - initialColNum
+		addFrameInfoToolCharging(pantsAnimations, direction, colNum, chargeNum)
+	elif condition == "IsUsingHeavyTool":
 		pantsAnimations[direction].append({
-			"Frame": frameNum,
+			"Frame": colNum,
 			"EndWhenFarmerFrameUpdates": True,
 			"Conditions": [
 				{
-				"Name": condition,
-				"Value": True
+					"Name": "IsUsingHeavyTool",
+					"Value": True
+				},
+				{
+					"Name": "ToolChargeLevel",
+					"Operator": "EqualTo",
+					"Value": 0
+				}
+			]
+		},)
+	elif condition == "events":
+		addFrameInfoEvents(pantsAnimations, direction, colNum, frameNum)
+	elif condition != "":
+		pantsAnimations[direction].append({
+			"Frame": colNum,
+			"EndWhenFarmerFrameUpdates": True,
+			"Conditions": [
+				{
+					"Name": condition,
+					"Value": True
 				}
 			]
 		},)
 
-def addFrameInfoToolCharging(pantsAnimations, direction, frameNum, chargeNum):
-	if chargeNum == 1:
+def addFrameInfoToolCharging(pantsAnimations, direction, colNum, chargeFrameNum):
+	if chargeFrameNum == 1:
 		pantsAnimations[direction].append({
-				"Frame": frameNum,
+				"Frame": colNum,
 				"EndWhenFarmerFrameUpdates": True,
 				"Conditions": [
 					{
-					"Name": "ToolChargeLevel",
-					"Operator": "EqualTo",
-					"Value": 1
+						"Name": "IsUsingHeavyTool",
+						"Value": True
+					},
+					{
+						"Name": "ToolChargeLevel",
+						"Operator": "EqualTo",
+						"Value": 1
 					}
 				]
 			},)
-	elif chargeNum == 2:
+	elif chargeFrameNum >= 2:
 		pantsAnimations[direction].append({
-				"Frame": frameNum,
+				"Frame": colNum,
 				"EndWhenFarmerFrameUpdates": True,
 				"Conditions": [
 					{
-					"Name": "ToolChargeLevel",
-					"Operator": "GreaterThan",
-					"Value": 1
+						"Name": "IsUsingHeavyTool",
+						"Value": True
+					},
+					{
+						"Name": "ToolChargeLevel",
+						"Operator": "GreaterThan",
+						"Value": 1
 					}
 				]
 			},)
+
+def addFrameInfoEvents(pantsAnimations, direction, colNum, frameNum):
+	pantsAnimations[direction].append({
+			"Frame": colNum,
+			"EndWhenFarmerFrameUpdates": True,
+			"Conditions": [
+				{
+				"Name": "CurrentFarmerFrame",
+				"Operator": "EqualTo",
+				"Value": frameNum
+				}
+			]
+		},)
+
 
 def saveAllSpriteRows(initialColNum, listName, originalImage, finalImage, pantsAnimations, condition, shiftRight):
 	rowNum = 0
@@ -293,10 +346,10 @@ def saveAllSpriteRows(initialColNum, listName, originalImage, finalImage, pantsA
 			finalImage.paste(frameImage,(colNum*16-featureXOffsetPerFrame[frameNum],rowNum*32-featureYOffsetPerFrame[frameNum]))
 
 			# Add the frames in this direction to the animations list
-			addFrameInfo(pantsAnimations, rowNum, colNum, condition, initialColNum)
+			addFrameInfo(pantsAnimations, rowNum, colNum, condition, initialColNum, frameNum)
 			# Add left pants as well if we're adding right pants
 			if rowNum == 1:
-				addFrameInfo(pantsAnimations, 3, colNum, condition, initialColNum)
+				addFrameInfo(pantsAnimations, 3, colNum, condition, initialColNum, frameNum)
 
 			# Increment the column number
 			colNum = colNum + 1
