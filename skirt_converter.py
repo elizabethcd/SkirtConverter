@@ -77,6 +77,10 @@ def main():
 			   ["6@90", "21@140", "17@100", "6@90", "20@140", "11@100"],
 			   ["12@90", "13@60", "22@120", "13@60", "12@90", "14@60", "23@120", "14@60"]]
 
+	swordSpecial = [["28"],
+					["34"],
+					["40"]]
+
 	heavyTool = [["66@150", "67@40", "68@40", "69@170", "70@75"],
 				 ["48@100", "49@40", "50@40", "51@220", "52@75"],
 				 ["36@100", "37@40", "38@40", "63@220", "62@75"]]
@@ -146,17 +150,17 @@ def main():
 
 		finalImage = Image.new(mode="RGBA",size=(4096, 96))
 
-		# Save all of the standing sprites row by row
-		nextColNum = saveAllSpriteRows(0, standing, originalImage, finalImage, pantsIdle, "default", shiftRight)
-
 		# Save all of the sitting sprites row by row
-		nextColNum = saveAllSpriteRows(nextColNum, sitting, originalImage, finalImage, pantsIdle, "IsSitting", shiftRight)
+		nextColNum = saveAllSpriteRows(0, sitting, originalImage, finalImage, pantsIdle, "IsSitting", shiftRight)
 
 		# Save all of the horseback riding sprites row by row
 		nextColNum = saveAllSpriteRows(nextColNum, horse, originalImage, finalImage, pantsAnimations, "RidingHorse", shiftRight)
 
 		# Save all of the horseback riding sprites row by row
 		nextColNum = saveAllSpriteRows(nextColNum, horse, originalImage, finalImage, pantsIdle, "RidingHorse", shiftRight)
+
+		# Save all of the standing sprites row by row
+		nextColNum = saveAllSpriteRows(nextColNum, standing, originalImage, finalImage, pantsIdle, "default", shiftRight)
 
 		# Save all of the slingshot sprites row by row
 		nextColNum = saveAllSpriteRows(nextColNum, slingshot, originalImage, finalImage, pantsIdle, "IsUsingSlingshot", shiftRight)
@@ -175,6 +179,9 @@ def main():
 
 		# Save all of the scythe sprites row by row
 		nextColNum = saveAllSpriteRows(nextColNum, meleeWeapon, originalImage, finalImage, pantsIdle, "IsUsingScythe", shiftRight)
+
+		# Save all of the sword special attack sprites row by row
+		nextColNum = saveAllSpriteRows(nextColNum, swordSpecial, originalImage, finalImage, pantsIdle, "byFrameNum", shiftRight)
 
 		# Save all of the melee weapon sprites row by row
 		nextColNum = saveAllSpriteRows(nextColNum, meleeWeapon, originalImage, finalImage, pantsIdle, "IsUsingMeleeWeapon", shiftRight)
