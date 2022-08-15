@@ -128,8 +128,8 @@ def main():
 	nausea = [["104@350", "105@350", "104@350", "105@350", "104@350", "105@350", "104@350", "105@350"]]
 
 	events = [["15", "95", "96", "97", "98", "99", "100", "111", "112"],
-				   ["15", "95", "96", "97", "98", "99", "100", "111", "112"],
-				   ["15", "95", "96", "97", "98", "99", "100", "111", "112"]]
+			  ["15", "95", "96", "97", "98", "99", "100", "111", "112"],
+			  ["15", "95", "96", "97", "98", "99", "100", "111", "112"]]
 
 	# Get all images in skirts folder
 	filelist = folderPath.glob("*.png")
@@ -189,16 +189,16 @@ def main():
 		nextColNum = saveAllSpriteRows(nextColNum, harvesting, originalImage, finalImage, pantsIdle, "IsHarvesting", shiftRight)
 
 		# Save all of the casting sprites row by row
-		nextColNum = saveAllSpriteRows(nextColNum, casting, originalImage, finalImage, pantsIdle, "IsCasting", shiftRight)
+		nextColNum = saveAllSpriteRows(nextColNum, casting, originalImage, finalImage, pantsIdle, "byFrameNum", shiftRight) # IsCasting
 
 		# Save all of the fishing sprites row by row
-		nextColNum = saveAllSpriteRows(nextColNum, fishing, originalImage, finalImage, pantsIdle, "IsFishing", shiftRight)
+		nextColNum = saveAllSpriteRows(nextColNum, fishing, originalImage, finalImage, pantsIdle, "byFrameNum", shiftRight) # IsFishing
 
 		# Save all of the reeling sprites row by row
-		nextColNum = saveAllSpriteRows(nextColNum, reeling, originalImage, finalImage, pantsIdle, "IsReeling", shiftRight)
+		nextColNum = saveAllSpriteRows(nextColNum, reeling, originalImage, finalImage, pantsIdle, "byFrameNum", shiftRight) # IsReeling
 
 		# Save all of the fish catching sprites row by row
-		nextColNum = saveAllSpriteRows(nextColNum, fishCatching, originalImage, finalImage, pantsIdle, "IsPullingFishOutOfWater", shiftRight)
+		nextColNum = saveAllSpriteRows(nextColNum, fishCatching, originalImage, finalImage, pantsIdle, "byFrameNum", shiftRight) # IsPullingFishOutOfWater
 
 		# Save all of the milking sprites row by row
 		nextColNum = saveAllSpriteRows(nextColNum, milking, originalImage, finalImage, pantsIdle, "IsUsingMilkPail", shiftRight)
@@ -225,7 +225,7 @@ def main():
 		nextColNum = saveAllSpriteRows(nextColNum, nausea, originalImage, finalImage, pantsIdle, "IsSick", shiftRight)
 
 		# Save all of the event sprites
-		nextColNum = saveAllSpriteRows(nextColNum, events, originalImage, finalImage, pantsIdle, "events", shiftRight)
+		nextColNum = saveAllSpriteRows(nextColNum, events, originalImage, finalImage, pantsIdle, "byFrameNum", shiftRight)
 
 		# Crop final image to the used portion
 		finalImage = finalImage.crop((0,0,nextColNum*16,3*32))
@@ -268,8 +268,8 @@ def addFrameInfo(pantsAnimations, direction, colNum, condition, initialColNum, f
 				}
 			]
 		},)
-	elif condition == "events":
-		addFrameInfoEvents(pantsAnimations, direction, colNum, frameNum)
+	elif condition == "byFrameNum":
+		addFrameInfoByFrameNum(pantsAnimations, direction, colNum, frameNum)
 	elif condition != "":
 		pantsAnimations[direction].append({
 			"Frame": colNum,
@@ -316,7 +316,7 @@ def addFrameInfoToolCharging(pantsAnimations, direction, colNum, chargeFrameNum)
 				]
 			},)
 
-def addFrameInfoEvents(pantsAnimations, direction, colNum, frameNum):
+def addFrameInfoByFrameNum(pantsAnimations, direction, colNum, frameNum):
 	pantsAnimations[direction].append({
 			"Frame": colNum,
 			"EndWhenFarmerFrameUpdates": True,
