@@ -38,7 +38,8 @@ def main():
 	# Create the parser
 	parser = argparse.ArgumentParser()
 	# Add an argument
-	parser.add_argument('--rightHalf', type=str, required=False, help="Whether to grab the right side sprites (female farmer base)",default=True)
+	parser.add_argument('--rightHalf', type=str, required=False, help="Whether to grab the right side sprites (female farmer base)")
+	parser.add_argument('--bathingSuit', type=str, required=False, help="Whether to convert the bathing suit sprites")
 	# Parse the argument
 	args = parser.parse_args()
 
@@ -51,6 +52,16 @@ def main():
 		shiftRight = True
 	else:
 		print("Invalid input, defaulting to right half of image")
+
+	# Parse the input manually to handle case-sensitivity
+	if args.bathingSuit is None:
+		drawBathingSuit = False
+	elif args.bathingSuit == "False" or args.bathingSuit == "false":
+		drawBathingSuit = False
+	elif args.bathingSuit == "True" or args.bathingSuit == "true":
+		drawBathingSuit = True
+	else:
+		print("Invalid input, defaulting to no bathing suit")
 
 	# As a check, print the behavior that is set
 	if shiftRight: 
@@ -158,7 +169,8 @@ def main():
 		nextColNum = saveAllSpriteRows(nextColNum, horse, originalImage, finalImage, pantsIdle, "RidingHorse", shiftRight)
 
 		# Save all of the bathing suit standing sprites row by row
-		nextColNum = saveAllSpriteRows(nextColNum, bathingSuitStanding, originalImage, finalImage, pantsIdle, "byFrameNum", shiftRight)
+		if drawBathingSuit:
+			nextColNum = saveAllSpriteRows(nextColNum, bathingSuitStanding, originalImage, finalImage, pantsIdle, "byFrameNum", shiftRight)
 
 		# Save all of the standing sprites row by row
 		nextColNum = saveAllSpriteRows(nextColNum, standing, originalImage, finalImage, pantsIdle, "default", shiftRight)
@@ -215,7 +227,8 @@ def main():
 		nextColNum = saveAllSpriteRows(nextColNum, shearing, originalImage, finalImage, pantsIdle, "IsUsingShears", shiftRight)
 
 		# Save all of the bathing suit sprites row by row
-		nextColNum = saveAllSpriteRows(nextColNum, bathingSuit, originalImage, finalImage, pantsAnimations, "byFrameNum", shiftRight)
+		if drawBathingSuit:
+			nextColNum = saveAllSpriteRows(nextColNum, bathingSuit, originalImage, finalImage, pantsAnimations, "byFrameNum", shiftRight)
 
 		# Save all of the eating sprites
 		nextColNum = saveAllSpriteRows(nextColNum, eating, originalImage, finalImage, pantsIdle, "IsEating", shiftRight)
@@ -244,7 +257,7 @@ def main():
 
 		# Save final image to output folder
 		finalImage.save(thisPantsFolder.joinpath("pants.png"))
-		pantsData = makePantsModels(pantsIdle, pantsAnimations, file.stem, shiftRight)
+		pantsData = makePantsModels(pantsIdle, pantsAnimations, file.stem, shiftRight, drawBathingSuit)
 
 		# Save pants json to output folder
 		
@@ -364,7 +377,7 @@ def saveAllSpriteRows(initialColNum, listName, originalImage, finalImage, pantsA
 		rowNum = rowNum + 1
 	return colNum
 
-def makePantsModels(pantsIdle, pantsAnimations, pantsName, shiftRight):
+def makePantsModels(pantsIdle, pantsAnimations, pantsName, shiftRight, drawBathingSuit):
 	pantsData = {}
 	pantsData["Name"] = pantsName
 
@@ -376,7 +389,10 @@ def makePantsModels(pantsIdle, pantsAnimations, pantsName, shiftRight):
 		frontPants["BodyPosition"] = {"X": 0, "Y": -1}
 	frontPants["PantsSize"] = {"Width": 16, "Length": 32}
 	frontPants["HideWhileSwimming"] = True
-	frontPants["HideWhileWearingBathingSuit"] = False
+	if drawBathingSuit:
+		frontPants["HideWhileWearingBathingSuit"] = False
+	else:
+		frontPants["HideWhileWearingBathingSuit"] = True
 	frontPants["DisableGrayscale"] = True
 	frontPants["IdleAnimation"] = pantsIdle[0]
 	frontPants["MovementAnimation"] = pantsAnimations[0]
@@ -390,7 +406,10 @@ def makePantsModels(pantsIdle, pantsAnimations, pantsName, shiftRight):
 		rightPants["BodyPosition"] = {"X": 0, "Y": 0}
 	rightPants["PantsSize"] = {"Width": 16, "Length": 32}
 	rightPants["HideWhileSwimming"] = True
-	rightPants["HideWhileWearingBathingSuit"] = False
+	if drawBathingSuit:
+		rightPants["HideWhileWearingBathingSuit"] = False
+	else:
+		rightPants["HideWhileWearingBathingSuit"] = True
 	rightPants["DisableGrayscale"] = True
 	rightPants["IdleAnimation"] = pantsIdle[1]
 	rightPants["MovementAnimation"] = pantsAnimations[1]
@@ -404,7 +423,10 @@ def makePantsModels(pantsIdle, pantsAnimations, pantsName, shiftRight):
 		backPants["BodyPosition"] = {"X": 0, "Y": -1}
 	backPants["PantsSize"] = {"Width": 16, "Length": 32}
 	backPants["HideWhileSwimming"] = True
-	backPants["HideWhileWearingBathingSuit"] = False
+	if drawBathingSuit:
+		backPants["HideWhileWearingBathingSuit"] = False
+	else:
+		backPants["HideWhileWearingBathingSuit"] = True
 	backPants["DisableGrayscale"] = True
 	backPants["IdleAnimation"] = pantsIdle[2]
 	backPants["MovementAnimation"] = pantsAnimations[2]
@@ -419,7 +441,10 @@ def makePantsModels(pantsIdle, pantsAnimations, pantsName, shiftRight):
 	leftPants["PantsSize"] = {"Width": 16, "Length": 32}
 	leftPants["Flipped"] = True
 	leftPants["HideWhileSwimming"] = True
-	leftPants["HideWhileWearingBathingSuit"] = False
+	if drawBathingSuit:
+		leftPants["HideWhileWearingBathingSuit"] = False
+	else:
+		leftPants["HideWhileWearingBathingSuit"] = True
 	leftPants["DisableGrayscale"] = True
 	leftPants["IdleAnimation"] = pantsIdle[3]
 	leftPants["MovementAnimation"] = pantsAnimations[3]
