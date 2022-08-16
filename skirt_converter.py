@@ -269,6 +269,12 @@ def addFrameInfo(pantsAnimations, direction, colNum, condition, initialColNum, f
 		pantsAnimations[direction].append({
 			"Frame": colNum,
 			"EndWhenFarmerFrameUpdates": True,
+			"Conditions": [
+				{
+					"Name": "IsSitting",
+					"Value": False
+				}
+			]
 		},)
 	elif condition == "toolCharge":
 		chargeNum = colNum - initialColNum
