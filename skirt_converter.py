@@ -38,8 +38,9 @@ def main():
 	# Create the parser
 	parser = argparse.ArgumentParser()
 	# Add an argument
-	parser.add_argument('--rightHalf', type=str, required=False, help="Whether to grab the right side sprites (female farmer base)")
-	parser.add_argument('--bathingSuit', type=str, required=False, help="Whether to convert the bathing suit sprites")
+	parser.add_argument('--rightHalf', type=str, required=False, help="Whether to grab the right side sprites (female farmer base). Default is true.")
+	parser.add_argument('--bathingSuit', type=str, required=False, help="Whether to convert the bathing suit sprites. Default is false.")
+	parser.add_argument('--dyeable', type=str, required=False, help="Whether to make the items dyeable. Default is false.")
 	# Parse the argument
 	args = parser.parse_args()
 
@@ -60,6 +61,16 @@ def main():
 		drawBathingSuit = False
 	elif args.bathingSuit == "True" or args.bathingSuit == "true":
 		drawBathingSuit = True
+	else:
+		print("Invalid input, defaulting to no bathing suit")
+
+	# Parse the input manually to handle case-sensitivity
+	if args.dyeable is None:
+		makeDyeable = False
+	elif args.dyeable == "False" or args.dyeable == "false":
+		makeDyeable = False
+	elif args.dyeable == "True" or args.dyeable == "true":
+		makeDyeable = True
 	else:
 		print("Invalid input, defaulting to no bathing suit")
 
@@ -257,7 +268,7 @@ def main():
 
 		# Save final image to output folder
 		finalImage.save(thisPantsFolder.joinpath("pants.png"))
-		pantsData = makePantsModels(pantsIdle, pantsAnimations, file.stem, shiftRight, drawBathingSuit)
+		pantsData = makePantsModels(pantsIdle, pantsAnimations, file.stem, shiftRight, drawBathingSuit, makeDyeable)
 
 		# Save pants json to output folder
 		
@@ -383,7 +394,7 @@ def saveAllSpriteRows(initialColNum, listName, originalImage, finalImage, pantsA
 		rowNum = rowNum + 1
 	return colNum
 
-def makePantsModels(pantsIdle, pantsAnimations, pantsName, shiftRight, drawBathingSuit):
+def makePantsModels(pantsIdle, pantsAnimations, pantsName, shiftRight, drawBathingSuit, makeDyeable):
 	pantsData = {}
 	pantsData["Name"] = pantsName
 
@@ -399,7 +410,7 @@ def makePantsModels(pantsIdle, pantsAnimations, pantsName, shiftRight, drawBathi
 		frontPants["HideWhileWearingBathingSuit"] = False
 	else:
 		frontPants["HideWhileWearingBathingSuit"] = True
-	frontPants["DisableGrayscale"] = True
+	frontPants["DisableGrayscale"] = not makeDyeable
 	frontPants["IdleAnimation"] = pantsIdle[0]
 	frontPants["MovementAnimation"] = pantsAnimations[0]
 	pantsData["FrontPants"] = frontPants
@@ -416,7 +427,7 @@ def makePantsModels(pantsIdle, pantsAnimations, pantsName, shiftRight, drawBathi
 		rightPants["HideWhileWearingBathingSuit"] = False
 	else:
 		rightPants["HideWhileWearingBathingSuit"] = True
-	rightPants["DisableGrayscale"] = True
+	rightPants["DisableGrayscale"] = not makeDyeable
 	rightPants["IdleAnimation"] = pantsIdle[1]
 	rightPants["MovementAnimation"] = pantsAnimations[1]
 	pantsData["RightPants"] = rightPants
@@ -433,7 +444,7 @@ def makePantsModels(pantsIdle, pantsAnimations, pantsName, shiftRight, drawBathi
 		backPants["HideWhileWearingBathingSuit"] = False
 	else:
 		backPants["HideWhileWearingBathingSuit"] = True
-	backPants["DisableGrayscale"] = True
+	backPants["DisableGrayscale"] = not makeDyeable
 	backPants["IdleAnimation"] = pantsIdle[2]
 	backPants["MovementAnimation"] = pantsAnimations[2]
 	pantsData["BackPants"] = backPants
@@ -451,7 +462,7 @@ def makePantsModels(pantsIdle, pantsAnimations, pantsName, shiftRight, drawBathi
 		leftPants["HideWhileWearingBathingSuit"] = False
 	else:
 		leftPants["HideWhileWearingBathingSuit"] = True
-	leftPants["DisableGrayscale"] = True
+	leftPants["DisableGrayscale"] = not makeDyeable
 	leftPants["IdleAnimation"] = pantsIdle[3]
 	leftPants["MovementAnimation"] = pantsAnimations[3]
 	pantsData["LeftPants"] = leftPants
