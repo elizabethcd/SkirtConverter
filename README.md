@@ -20,7 +20,7 @@ Feedback is welcome via Github issues or the Stardew Valley Discord (please incl
     1. On a Mac, see the detailed guide for three different ways to do this.
     2. On Windows, open File Explorer to the folder you want, click on the address bar, type `powershell`, and hit return.
     3. If you use Linux you can check out info on `cd` for your distro (or see Mac guide)
-7. Run the python script ``skirt_converter.py`` by typing ``python skirt_converter.py`` and hitting return. By default, the script pulls from the right side (female farmer base), but you can set a flag ``--rightHalf False`` to pull from the left side instead. By default, the script does not convert bathing suit sprites, but you can set a flag ``--bathingSuit True`` to include them. 
+7. Run the python script ``skirt_converter.py`` by typing ``python skirt_converter.py`` and hitting return. By default, the script pulls from the right side (female farmer base), but you can set a flag ``--rightHalf False`` to pull from the left side instead. By default, the script does not convert bathing suit sprites, but you can set a flag ``--bathingSuit True`` to include them. By default, the skirts/pants are not dyeable, but you can set a flag ``--dyeable True`` to make them dyeable.
 8. In the `output` folder, some folders will be generated. You can place these in a folder named `Pants` in an FS mod folder. 
 
 If any of the initial Python installation steps or running the Python script are giving you trouble, you can reference the detailed guides from my furniture converter that also relies on Python:
