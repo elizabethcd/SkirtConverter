@@ -40,7 +40,6 @@ https://github.com/elizabethcd/FurnitureConverter/blob/main/docs/Linux_guide.md#
 * Fashion Sense does not allow for gendered clothing. If you want to create clothing matching both genders on the original spritesheet (left and right sides), run the script twice to make two clothing items. 
 
 Fashion Sense bugs (not due to this script):
-* Fashion Sense has a small bug with sitting from moving where it uses the wrong sprites.
 * Slingshot arms are invisible when wearing anything FS. 
 
 ## Planned Updates
