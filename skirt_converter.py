@@ -179,6 +179,12 @@ def main():
 		# Save all of the horseback riding sprites row by row
 		nextColNum = saveAllSpriteRows(nextColNum, horse, originalImage, finalImage, pantsIdle, "RidingHorse", shiftRight)
 
+		# Save all of the walking sprites row by row
+		nextColNum = saveAllSpriteRows(nextColNum, walking, originalImage, finalImage, pantsAnimations, "byFrameNum", shiftRight)
+
+		# Save all of the running sprites row by row
+		nextColNum = saveAllSpriteRows(nextColNum, running, originalImage, finalImage, pantsAnimations, "byFrameNum", shiftRight)
+		
 		# Save all of the bathing suit standing sprites row by row
 		if drawBathingSuit:
 			nextColNum = saveAllSpriteRows(nextColNum, bathingSuitStanding, originalImage, finalImage, pantsIdle, "byFrameNum", shiftRight)
@@ -188,12 +194,6 @@ def main():
 
 		# Save all of the slingshot sprites row by row
 		nextColNum = saveAllSpriteRows(nextColNum, slingshot, originalImage, finalImage, pantsIdle, "IsUsingSlingshot", shiftRight)
-
-		# Save all of the walking sprites row by row
-		nextColNum = saveAllSpriteRows(nextColNum, walking, originalImage, finalImage, pantsAnimations, "byFrameNum", shiftRight)
-
-		# Save all of the running sprites row by row
-		nextColNum = saveAllSpriteRows(nextColNum, running, originalImage, finalImage, pantsAnimations, "IsRunning", shiftRight)
 
 		# Save all of the heavy tool pressed sprites row by row
 		nextColNum = saveAllSpriteRows(nextColNum, heavyToolPressed, originalImage, finalImage, pantsIdle, "toolCharge", shiftRight)
